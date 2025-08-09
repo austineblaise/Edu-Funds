@@ -70,7 +70,20 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <RainbowKitProvider chains={chains}>
         <ConnectWalletButtonProvider>
           <App dark={true} safeAreas={true} theme={theme}>
-            <ToastContainer />
+          <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="dark"
+  className="z-[9999]"
+/>
+
             <Component {...pageProps} />
           </App>
         </ConnectWalletButtonProvider>
