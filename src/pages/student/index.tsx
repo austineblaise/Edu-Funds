@@ -114,67 +114,6 @@ export default function StudentDashboard() {
   };
   
 
-  // const handleWithdraw = async (index: number) => {
-  //   if (!isConnected) return toast.info("Please connect wallet");
-  
-  //   const toastId = toast.loading("⏳ Processing withdrawal...");
-  
-  //   try {
-  //     setLoading(true);
-  
-  //     const signer = await getSigner();
-  //     const stipend = new ethers.Contract(
-  //       STIPEND_MANAGER_ADDRESS,
-  //       StipendManagerAbi.abi,
-  //       signer
-  //     );
-  
-  //     const tx = await stipend.withdraw(index);
-  //     await tx.wait();
-  
-  //     await loadStipends();
-  
-  //     toast.update(toastId, {
-  //       render: "✅ Withdrawal successful!",
-  //       type: "success",
-  //       isLoading: false,
-  //       autoClose: 3000,
-  //     });
-  //   } catch (e) {
-  //     console.error(e);
-  //     toast.update(toastId, {
-  //       render: "❌ Withdrawal failed.",
-  //       type: "error",
-  //       isLoading: false,
-  //       autoClose: 3000,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  
-  
-  // const handleWithdraw = async (index: number) => {
-  //   const signer = await getSigner();
-  //   const stipend = new ethers.Contract(
-  //     STIPEND_MANAGER_ADDRESS,
-  //     StipendManagerAbi.abi,
-  //     signer
-  //   );
-  //   try {
-  //     setLoading(true);
-  //     const tx = await stipend.withdraw(index);
-  //     await tx.wait();
-  //     toast.success("Withdrawn!");
-  //     await loadStipends();
-  //   } catch (e) {
-  //     console.error(e);
-  //     toast.error("Withdraw failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const now = Math.floor(Date.now() / 1000);
 
   return (

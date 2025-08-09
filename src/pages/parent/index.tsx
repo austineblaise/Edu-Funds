@@ -90,33 +90,7 @@ export default function ParentDashboard() {
     }
   };
 
-  // useEffect(() => {
-  //   if (isConnected) fetchBalance();
-  // }, [isConnected]);
 
-  // const handleMint = async () => {
-  //   if (!isConnected) return toast.info("Please connect wallet");
-
-  // const toastId = toast.loading("⏳ Minting EDU tokens...");
-  //   try {
-  //     setLoadingMint(true);
-  //     const signer = await getSigner();
-  //     const edu = new ethers.Contract(
-  //       EDU_TOKEN_ADDRESS,
-  //       EduTokenAbi.abi,
-  //       signer
-  //     );
-  //     const tx = await edu.mint(address, ethers.utils.parseEther("1000"));
-  //     await tx.wait();
-  //     await fetchBalance();
-  //     toast.success("✅ Minted 1000 EDU!");
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("❌ Mint failed.");
-  //   } finally {
-  //     setLoadingMint(false);
-  //   }
-  // };
 
   const handleMint = async () => {
     if (!isConnected) return toast.info("Please connect wallet");
@@ -345,23 +319,7 @@ export default function ParentDashboard() {
           <div className="mb-6 text-sm text-gray-700">
             {!isConnected ? (
               <div className="flex justify-center">
-                {/* <button
-                onClick={() => connect({ connector: injected() })}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
-              >
-                Connect Wallet
-              </button> */}
-
-                {/* <button
-                onClick={async () => {
-                  await connect({ connector: injected() });
-                  await switchToAlfajores();
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-              >
-                Connect Wallet
-              </button> */}
-
+            
                 <div className="flex justify-center mb-6">
                   <div className="flex justify-center mb-6"></div>
                 </div>
