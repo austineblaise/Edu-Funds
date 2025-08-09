@@ -42,8 +42,15 @@ const Layout = ({
       <div className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-gray-800/50 shadow-xl">
         <div className="px-4 sm:px-6 lg:px-8">
           <Navbar
-            title="Edufunds"
-            titleClassName="text-md md:text-xl lg:text-2xl logo-font text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text font-bold"
+           title={
+            <Link
+              href="/"
+              className="text-md md:text-xl lg:text-2xl logo-font text-transparent bg-gradient-to-r from-green-400 to-green-600 bg-clip-text font-bold"
+            >
+              Edufunds
+            </Link>
+          }
+            titleClassName="text-md md:text-xl lg:text-2xl logo-font text-transparent bg-gradient-to-r from-green-400 to-green-600 bg-clip-text font-bold"
             right={
               <div className="flex items-center gap-3">
                 <div className="hidden md:flex gap-6">
@@ -95,7 +102,7 @@ const Layout = ({
               href="/parent"
               className={`w-full py-2 ${
                 pathName === "/parent"
-                  ? "text-yellow-400"
+                  ? "text-green-400"
                   : "text-gray-300 hover:text-yellow-400"
               }`}
               onClick={() => setMobileMenuOpen(false)}

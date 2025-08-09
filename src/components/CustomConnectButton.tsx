@@ -43,7 +43,7 @@ export const CustomConnectButton = () => {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="px-4 py-2 rounded-full text-white font-semibold bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-600 shadow-lg hover:opacity-90"
+                    className="px-3 py-1 rounded-md text-white font-semibold bg-gradient-to-r from-green-300 via-green-500 to-green-600 shadow-lg hover:opacity-90"
                   >
                     Connect Wallet
                   </button>
@@ -73,7 +73,7 @@ export const CustomConnectButton = () => {
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
                     onClick={openChainModal}
-                    className='yellow-700'
+                    className='green-700'
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -109,7 +109,7 @@ export const CustomConnectButton = () => {
                   </button>
                   <button
                     onClick={openAccountModal}
-                    className='yellow-700'
+                    className='green-700'
                     type="button"
                     style={{
                       color: 'white',

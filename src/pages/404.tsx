@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "./Layout";
 import Link from "next/link";
 import { Button } from "konsta/react";
-import LottieAnimation from "@/animation/lottie";
+
 
 export default function Custom404() {
   return (
@@ -13,7 +13,6 @@ export default function Custom404() {
         <Link href="/" className="inline-block">
           <Button className="bg-gray-700">Go Home</Button>
         </Link>
-        <LottieAnimation />
       </div>
     </Layout>
   );
