@@ -1,20 +1,20 @@
 # Edufunds Frontend
 
-Edufunds is a decentralized funding platform for students and parents, built with **Next.js**, **Wagmi**, **RainbowKit**, and **Celo blockchain**.  
-This is the **frontend application** that interacts with the Edufunds smart contracts.
+Edufunds is a Celo-powered platform for managing student stipends — with smart spending controls, automated savings, real-time withdrawal tracking, and transparent fund allocation between parents and students. Built with **Next.js**, **Wagmi**, **RainbowKit**, and **Celo blockchain**.
 
 ---
 
 ## 🚀 Features
+
 - 🔗 Connect with multiple wallets via RainbowKit
 - 📱 Mobile-first responsive design
 - 👨‍👩‍👧 Two user flows: **Parents** & **Students**
 - 🔒 Secure blockchain transactions via Celo network
-- 🖤 Dark theme UI with modern TailwindCSS styling
 
 ---
 
 ## 🛠 Tech Stack
+
 - **Next.js 14+** — React framework
 - **TypeScript** — Type safety
 - **TailwindCSS** — Styling
@@ -27,7 +27,7 @@ This is the **frontend application** that interacts with the Edufunds smart cont
 ## 📦 Installation
 
 ### 1️⃣ Clone the repository
-```bash
+
 git clone https://github.com/austineblaise/Edu-Funds.git
 
 
@@ -54,3 +54,4 @@ Production
 npm run build
 npm run start
 
+```

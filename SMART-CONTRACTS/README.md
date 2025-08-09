@@ -2,7 +2,7 @@
 
 ## **README — Edufunds Smart Contract**
 
-```md
+
 # Edufunds Smart Contract
 
 This is the **smart contract** for the Edufunds platform.  
