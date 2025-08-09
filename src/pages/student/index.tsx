@@ -5,8 +5,9 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { ethers } from "ethers";
 import StipendManagerAbi from "@/lib/abis/StipendManager.json";
 import { formatDistanceToNow } from "date-fns";
-import { toast } from "react-toastify";
 import Layout from "../Layout";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const STIPEND_MANAGER_ADDRESS = "0xc31c5d51D3a1b234401A7F8f5804f85bb7877fcf";
 
@@ -178,6 +179,7 @@ export default function StudentDashboard() {
 
   return (
     <Layout>
+      <ToastContainer/>
       <div>
         <main className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">

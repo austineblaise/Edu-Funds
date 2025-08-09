@@ -6,7 +6,8 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { ethers } from "ethers";
 import EduTokenAbi from "@/lib/abis/EduToken.json";
 import StipendManagerAbi from "@/lib/abis/StipendManager.json";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { getWalletClient } from "wagmi/actions";
 import Layout from "../Layout";
 
@@ -52,12 +53,10 @@ export default function ParentDashboard() {
   // };
 
   useEffect(() => {
-  if (mounted && isConnected) {
-    fetchBalance();
-  }
-}, [mounted, isConnected, address]);
-
-
+    if (mounted && isConnected) {
+      fetchBalance();
+    }
+  }, [mounted, isConnected, address]);
 
   useEffect(() => {
     setMounted(true);
@@ -119,14 +118,11 @@ export default function ParentDashboard() {
   //   }
   // };
 
-
-
-
   const handleMint = async () => {
     if (!isConnected) return toast.info("Please connect wallet");
-  
+
     const toastId = toast.loading("⏳ Minting EDU tokens...");
-  
+
     try {
       setLoadingMint(true);
       const signer = await getSigner();
@@ -135,12 +131,12 @@ export default function ParentDashboard() {
         EduTokenAbi.abi,
         signer
       );
-  
+
       const tx = await edu.mint(address, ethers.utils.parseEther("1000"));
       await tx.wait();
-  
+
       await fetchBalance();
-  
+
       toast.update(toastId, {
         render: "✅ Successfully minted 1000 EDU!",
         type: "success",
@@ -159,11 +155,6 @@ export default function ParentDashboard() {
       setLoadingMint(false);
     }
   };
-  
-
-
-
-
 
   const handleAssign = async () => {
     if (!isConnected) return toast.info("Please connect wallet");
@@ -171,38 +162,49 @@ export default function ParentDashboard() {
       return toast.error("Invalid student address");
     if (!amount || !category || !unlockDate)
       return toast.error("Fill all fields");
-  
+
     const toastId = toast.loading("⏳ Assigning stipend...");
-  
+
     try {
       setLoadingAssign(true);
       const signer = await getSigner();
-      const edu = new ethers.Contract(EDU_TOKEN_ADDRESS, EduTokenAbi.abi, signer);
-      const stipend = new ethers.Contract(STIPEND_MANAGER_ADDRESS, StipendManagerAbi.abi, signer);
-  
+      const edu = new ethers.Contract(
+        EDU_TOKEN_ADDRESS,
+        EduTokenAbi.abi,
+        signer
+      );
+      const stipend = new ethers.Contract(
+        STIPEND_MANAGER_ADDRESS,
+        StipendManagerAbi.abi,
+        signer
+      );
+
       const amountWei = ethers.utils.parseEther(amount);
       const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
-  
+
       const approvalTx = await edu.approve(STIPEND_MANAGER_ADDRESS, amountWei);
       await approvalTx.wait();
-  
-      const assignTx = await stipend.assignStipend(student, amountWei, unlock, category);
-      
-   
+
+      const assignTx = await stipend.assignStipend(
+        student,
+        amountWei,
+        unlock,
+        category
+      );
+
       fetchBalance();
-  
+
       await assignTx.wait(); // wait for confirmation
-      
-    
+
       await fetchBalance();
-  
+
       toast.update(toastId, {
         render: "✅ Stipend assigned!",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
-  
+
       setStudent("");
       setAmount("");
       setCategory("");
@@ -219,8 +221,6 @@ export default function ParentDashboard() {
       setLoadingAssign(false);
     }
   };
-  
-
 
   // const handleAssign = async () => {
   //   if (!isConnected) return toast.info("Please connect wallet");
@@ -228,9 +228,9 @@ export default function ParentDashboard() {
   //     return toast.error("Invalid student address");
   //   if (!amount || !category || !unlockDate)
   //     return toast.error("Fill all fields");
-  
+
   //   const toastId = toast.loading("⏳ Assigning stipend...");
-  
+
   //   try {
   //     setLoadingAssign(true);
   //     const signer = await getSigner();
@@ -244,13 +244,13 @@ export default function ParentDashboard() {
   //       StipendManagerAbi.abi,
   //       signer
   //     );
-  
+
   //     const amountWei = ethers.utils.parseEther(amount);
   //     const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
-  
+
   //     const approvalTx = await edu.approve(STIPEND_MANAGER_ADDRESS, amountWei);
   //     await approvalTx.wait();
-  
+
   //     const assignTx = await stipend.assignStipend(
   //       student,
   //       amountWei,
@@ -258,16 +258,16 @@ export default function ParentDashboard() {
   //       category
   //     );
   //     await assignTx.wait();
-  
+
   //     await fetchBalance();
-  
+
   //     toast.update(toastId, {
   //       render: "✅ Stipend assigned!",
   //       type: "success",
   //       isLoading: false,
   //       autoClose: 3000,
   //     });
-  
+
   //     setStudent("");
   //     setAmount("");
   //     setCategory("");
@@ -284,7 +284,6 @@ export default function ParentDashboard() {
   //     setLoadingAssign(false);
   //   }
   // };
-  
 
   // const handleAssign = async () => {
   //   if (!isConnected) return toast.info("Please connect wallet");
@@ -339,20 +338,21 @@ export default function ParentDashboard() {
   // };
 
   return (
-      <Layout>
-    <div className="min-h-screen bg-black">
-      <main className="max-w-3xl mx-auto px-4 py-10">
-        <div className="mb-6 text-sm text-gray-700">
-          {!isConnected ? (
-            <div className="flex justify-center">
-              {/* <button
+    <Layout>
+        <ToastContainer/>
+      <div className="min-h-screen bg-black">
+        <main className="max-w-3xl mx-auto px-4 py-10">
+          <div className="mb-6 text-sm text-gray-700">
+            {!isConnected ? (
+              <div className="flex justify-center">
+                {/* <button
                 onClick={() => connect({ connector: injected() })}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
               >
                 Connect Wallet
               </button> */}
 
-              {/* <button
+                {/* <button
                 onClick={async () => {
                   await connect({ connector: injected() });
                   await switchToAlfajores();
@@ -362,123 +362,126 @@ export default function ParentDashboard() {
                 Connect Wallet
               </button> */}
 
-              <div className="flex justify-center mb-6">
-                <div className="flex justify-center mb-6"></div>
+                <div className="flex justify-center mb-6">
+                  <div className="flex justify-center mb-6"></div>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <span className="text-white">
-                  Wallet:{" "}
-                  <span className="font-mono text-green-500">
-                    {address?.slice(0, 6)}...{address?.slice(-4)}
+            ) : (
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-white">
+                    Wallet:{" "}
+                    <span className="font-mono text-green-500">
+                      {address?.slice(0, 6)}...{address?.slice(-4)}
+                    </span>
                   </span>
-                </span>
-                <button
-                  onClick={() => disconnect()}
-                  className="hover:underline text-sm bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded"
-                >
-                  Disconnect
-                </button>
+                  <button
+                    onClick={() => disconnect()}
+                    className="hover:underline text-sm bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+                <div className="text-white">
+                  Balance:{" "}
+                  <span className="font-semibold text-green-500">
+                    {balance} EDU
+                  </span>
+                </div>
               </div>
-              <div className="text-white">
-                Balance:{" "}
-                <span className="font-semibold text-green-500">
-                  {balance} EDU
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <h1 className="text-3xl font-bold mb-8 text-center">
-          🎓 Parent Dashboard
-        </h1>
-
-        <section className="bg-white shadow-md rounded-xl p-6 mb-8">
-          <h3 className="text-xl font-semibold mb-3 text-black">
-            Mint EDU Token
-          </h3>
-          <button
-            onClick={handleMint}
-            disabled={loadingMint}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition disabled:opacity-60"
-          >
-            {loadingMint ? "Minting..." : "Mint 1000 EDU"}
-          </button>
-        </section>
-
-        <section className="bg-white shadow-md rounded-xl p-6 text-black">
-          <h2 className="text-xl font-semibold mb-4">Assign Stipend</h2>
-
-          <div className="grid gap-4">
-            <div className="flex flex-col">
-              <label htmlFor="student" className="mb-1 text-sm font-medium">
-                Student Wallet Address
-              </label>
-              <input
-                id="student"
-                type="text"
-                placeholder="0x123..."
-                value={student}
-                onChange={(e) => setStudent(e.target.value)}
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="amount" className="mb-1 text-sm font-medium">
-                Amount (EDU)
-              </label>
-              <input
-                id="amount"
-                type="number"
-                placeholder="e.g. 50"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="category" className="mb-1 text-sm font-medium">
-                Category (e.g. books, transport)
-              </label>
-              <input
-                id="category"
-                type="text"
-                placeholder="e.g. food, transport"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="unlockDate" className="mb-1 text-sm font-medium">
-                Unlock Date & Time
-              </label>
-              <input
-                id="unlockDate"
-                type="datetime-local"
-                value={unlockDate}
-                onChange={(e) => setUnlockDate(e.target.value)}
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
-              />
-            </div>
-
-            <button
-              onClick={handleAssign}
-              disabled={loadingAssign}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition disabled:opacity-60"
-            >
-              {loadingAssign ? "Assigning..." : "Assign Stipend"}
-            </button>
+            )}
           </div>
-        </section>
-      </main>
-    </div>
+
+          <h1 className="text-3xl font-bold mb-8 text-center">
+            🎓 Parent Dashboard
+          </h1>
+
+          <section className="bg-white shadow-md rounded-xl p-6 mb-8">
+            <h3 className="text-xl font-semibold mb-3 text-black">
+              Mint EDU Token
+            </h3>
+            <button
+              onClick={handleMint}
+              disabled={loadingMint}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition disabled:opacity-60"
+            >
+              {loadingMint ? "Minting..." : "Mint 1000 EDU"}
+            </button>
+          </section>
+
+          <section className="bg-white shadow-md rounded-xl p-6 text-black">
+            <h2 className="text-xl font-semibold mb-4">Assign Stipend</h2>
+
+            <div className="grid gap-4">
+              <div className="flex flex-col">
+                <label htmlFor="student" className="mb-1 text-sm font-medium">
+                  Student Wallet Address
+                </label>
+                <input
+                  id="student"
+                  type="text"
+                  placeholder="0x123..."
+                  value={student}
+                  onChange={(e) => setStudent(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label htmlFor="amount" className="mb-1 text-sm font-medium">
+                  Amount (EDU)
+                </label>
+                <input
+                  id="amount"
+                  type="number"
+                  placeholder="e.g. 50"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label htmlFor="category" className="mb-1 text-sm font-medium">
+                  Category (e.g. books, transport)
+                </label>
+                <input
+                  id="category"
+                  type="text"
+                  placeholder="e.g. food, transport"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label
+                  htmlFor="unlockDate"
+                  className="mb-1 text-sm font-medium"
+                >
+                  Unlock Date & Time
+                </label>
+                <input
+                  id="unlockDate"
+                  type="datetime-local"
+                  value={unlockDate}
+                  onChange={(e) => setUnlockDate(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                />
+              </div>
+
+              <button
+                onClick={handleAssign}
+                disabled={loadingAssign}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition disabled:opacity-60"
+              >
+                {loadingAssign ? "Assigning..." : "Assign Stipend"}
+              </button>
+            </div>
+          </section>
+        </main>
+      </div>
     </Layout>
   );
 }
