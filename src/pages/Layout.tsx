@@ -6,7 +6,6 @@ import { getAccount } from "@wagmi/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
-import ZumjiLogo from "@/components/logo/Logo";
 import useGetIsOnboarded from "@/hooks/use-get-is-onboarded/useGetIsOnboarded";
 import { useConnectState } from "@/hooks/use-connect/useConnect";
 import { Menu, X } from "lucide-react";
@@ -107,8 +106,8 @@ const Layout = ({
               href="/student"
               className={`w-full py-2 ${
                 pathName === "/student"
-                  ? "text-yellow-400"
-                  : "text-gray-300 hover:text-yellow-400"
+                  ? "text-green-400"
+                  : "text-gray-300 hover:text-green-400"
               }`}
               onClick={() => setMobileMenuOpen(false)}
             >

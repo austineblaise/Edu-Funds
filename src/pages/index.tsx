@@ -3,33 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { Chip, Icon } from "konsta/react";
 import Layout from "./Layout";
-import { useAccount, useContractRead } from "wagmi";
-import { writeContract, readContract, waitForTransaction } from "@wagmi/core";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaChevronRight } from "react-icons/fa";
-import ZumjiReferralJson from "@/utils/ZumjiReferral.json";
 
-export const ZUMJI_REFERRAL_ABI = ZumjiReferralJson.abi;
-export const ZUMJI_REFERRAL_ADDRESS =
-  "0x62F3ea14ECa8f01E2b50B9f8345615a4B4F00B5D";
 
 export default function Home() {
-  const { address } = useAccount();
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  const { data: referralPoints } = useContractRead({
-    address: ZUMJI_REFERRAL_ADDRESS,
-    abi: ZUMJI_REFERRAL_ABI,
-    functionName: "getPoints",
-    args: address ? [address] : undefined,
-    enabled: !!address,
-    watch: true,
-  });
 
 
   if (!hasMounted) return null;

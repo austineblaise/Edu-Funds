@@ -1,7 +1,7 @@
 import { useConnectState } from '@/hooks/use-connect/useConnect';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+
 
 export const CustomConnectButton = () => {
   const { setIsConnected } = useConnectState();
