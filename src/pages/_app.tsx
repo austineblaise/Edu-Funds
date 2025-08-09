@@ -1,16 +1,15 @@
-import { App } from 'konsta/react';
+import { App } from "konsta/react";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
-
 import "@rainbow-me/rainbowkit/styles.css";
-
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { celo, celoAlfajores } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-import { ConnectWalletButtonProvider } from '@/context/ConnectContext';
-
+import { ConnectWalletButtonProvider } from "@/context/ConnectContext";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -20,11 +19,11 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
       ? [celoAlfajores]
       : []),
   ],
-  [publicProvider()],
+  [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "Fuse Pay",
+  appName: "Edu Funds",
   projectId: "684b1d74-8de4-8005-a6b3-391b1456e02c",
   chains,
 });
@@ -54,12 +53,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       setDeviceType("laptop");
     }
   }, []);
-  const theme = deviceType === "ios" ? "ios" : "material";  
-  
+  const theme = deviceType === "ios" ? "ios" : "material";
+
   if (maintenance) {
     return (
       <div className="text-center mt-20">
-        <h1 className="text-4xl font-bold">Zumji is currently under maintenance</h1>
+        <h1 className="text-4xl font-bold">
+          Edu funds is currently under maintenance
+        </h1>
       </div>
     );
   }
@@ -68,9 +69,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
         <ConnectWalletButtonProvider>
-        <App dark={true} safeAreas={true} theme={theme}>
-          <Component {...pageProps} />
-        </App>
+          <App dark={true} safeAreas={true} theme={theme}>
+            <ToastContainer />
+            <Component {...pageProps} />
+          </App>
         </ConnectWalletButtonProvider>
       </RainbowKitProvider>
     </WagmiConfig>

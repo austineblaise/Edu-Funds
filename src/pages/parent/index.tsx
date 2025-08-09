@@ -31,6 +31,7 @@ export default function ParentDashboard() {
   const [balance, setBalance] = useState("0");
   const [loadingAssign, setLoadingAssign] = useState(false);
   const [loadingMint, setLoadingMint] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // const getSigner = async () => {
   //   const provider = new ethers.BrowserProvider((window as any).ethereum);
@@ -49,6 +50,22 @@ export default function ParentDashboard() {
   //   const provider = new ethers.providers.Web3Provider(walletClient.transport);
   //   return provider.getSigner();
   // };
+
+  useEffect(() => {
+  if (mounted && isConnected) {
+    fetchBalance();
+  }
+}, [mounted, isConnected, address]);
+
+
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // or loading spinner
+  }
 
   const getSigner = async () => {
     const walletClient = await getWalletClient();
@@ -74,12 +91,42 @@ export default function ParentDashboard() {
     }
   };
 
-  useEffect(() => {
-    if (isConnected) fetchBalance();
-  }, [isConnected]);
+  // useEffect(() => {
+  //   if (isConnected) fetchBalance();
+  // }, [isConnected]);
+
+  // const handleMint = async () => {
+  //   if (!isConnected) return toast.info("Please connect wallet");
+
+  // const toastId = toast.loading("⏳ Minting EDU tokens...");
+  //   try {
+  //     setLoadingMint(true);
+  //     const signer = await getSigner();
+  //     const edu = new ethers.Contract(
+  //       EDU_TOKEN_ADDRESS,
+  //       EduTokenAbi.abi,
+  //       signer
+  //     );
+  //     const tx = await edu.mint(address, ethers.utils.parseEther("1000"));
+  //     await tx.wait();
+  //     await fetchBalance();
+  //     toast.success("✅ Minted 1000 EDU!");
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("❌ Mint failed.");
+  //   } finally {
+  //     setLoadingMint(false);
+  //   }
+  // };
+
+
+
 
   const handleMint = async () => {
     if (!isConnected) return toast.info("Please connect wallet");
+  
+    const toastId = toast.loading("⏳ Minting EDU tokens...");
+  
     try {
       setLoadingMint(true);
       const signer = await getSigner();
@@ -88,17 +135,35 @@ export default function ParentDashboard() {
         EduTokenAbi.abi,
         signer
       );
+  
       const tx = await edu.mint(address, ethers.utils.parseEther("1000"));
       await tx.wait();
+  
       await fetchBalance();
-      toast.success("✅ Minted 1000 EDU!");
+  
+      toast.update(toastId, {
+        render: "✅ Successfully minted 1000 EDU!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } catch (err) {
       console.error(err);
-      toast.error("❌ Mint failed.");
+      toast.update(toastId, {
+        render: "❌ Mint failed.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } finally {
       setLoadingMint(false);
     }
   };
+  
+
+
+
+
 
   const handleAssign = async () => {
     if (!isConnected) return toast.info("Please connect wallet");
@@ -106,51 +171,172 @@ export default function ParentDashboard() {
       return toast.error("Invalid student address");
     if (!amount || !category || !unlockDate)
       return toast.error("Fill all fields");
-
+  
+    const toastId = toast.loading("⏳ Assigning stipend...");
+  
     try {
       setLoadingAssign(true);
       const signer = await getSigner();
-      const edu = new ethers.Contract(
-        EDU_TOKEN_ADDRESS,
-        EduTokenAbi.abi,
-        signer
-      );
-      const stipend = new ethers.Contract(
-        STIPEND_MANAGER_ADDRESS,
-        StipendManagerAbi.abi,
-        signer
-      );
-
+      const edu = new ethers.Contract(EDU_TOKEN_ADDRESS, EduTokenAbi.abi, signer);
+      const stipend = new ethers.Contract(STIPEND_MANAGER_ADDRESS, StipendManagerAbi.abi, signer);
+  
       const amountWei = ethers.utils.parseEther(amount);
-      // const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
       const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
-
+  
       const approvalTx = await edu.approve(STIPEND_MANAGER_ADDRESS, amountWei);
       await approvalTx.wait();
-
-      // ⛳ This now includes `category`
-      const assignTx = await stipend.assignStipend(
-        student,
-        amountWei,
-        unlock,
-        category
-      );
-      await assignTx.wait();
-
+  
+      const assignTx = await stipend.assignStipend(student, amountWei, unlock, category);
+      
+   
+      fetchBalance();
+  
+      await assignTx.wait(); // wait for confirmation
+      
+    
       await fetchBalance();
-
-      toast.success("✅ Stipend assigned!");
+  
+      toast.update(toastId, {
+        render: "✅ Stipend assigned!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+  
       setStudent("");
       setAmount("");
       setCategory("");
       setUnlockDate("");
     } catch (e) {
       console.error(e);
-      toast.error("❌ Failed to assign stipend");
+      toast.update(toastId, {
+        render: "❌ Failed to assign stipend",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } finally {
       setLoadingAssign(false);
     }
   };
+  
+
+
+  // const handleAssign = async () => {
+  //   if (!isConnected) return toast.info("Please connect wallet");
+  //   if (!ethers.utils.isAddress(student))
+  //     return toast.error("Invalid student address");
+  //   if (!amount || !category || !unlockDate)
+  //     return toast.error("Fill all fields");
+  
+  //   const toastId = toast.loading("⏳ Assigning stipend...");
+  
+  //   try {
+  //     setLoadingAssign(true);
+  //     const signer = await getSigner();
+  //     const edu = new ethers.Contract(
+  //       EDU_TOKEN_ADDRESS,
+  //       EduTokenAbi.abi,
+  //       signer
+  //     );
+  //     const stipend = new ethers.Contract(
+  //       STIPEND_MANAGER_ADDRESS,
+  //       StipendManagerAbi.abi,
+  //       signer
+  //     );
+  
+  //     const amountWei = ethers.utils.parseEther(amount);
+  //     const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
+  
+  //     const approvalTx = await edu.approve(STIPEND_MANAGER_ADDRESS, amountWei);
+  //     await approvalTx.wait();
+  
+  //     const assignTx = await stipend.assignStipend(
+  //       student,
+  //       amountWei,
+  //       unlock,
+  //       category
+  //     );
+  //     await assignTx.wait();
+  
+  //     await fetchBalance();
+  
+  //     toast.update(toastId, {
+  //       render: "✅ Stipend assigned!",
+  //       type: "success",
+  //       isLoading: false,
+  //       autoClose: 3000,
+  //     });
+  
+  //     setStudent("");
+  //     setAmount("");
+  //     setCategory("");
+  //     setUnlockDate("");
+  //   } catch (e) {
+  //     console.error(e);
+  //     toast.update(toastId, {
+  //       render: "❌ Failed to assign stipend",
+  //       type: "error",
+  //       isLoading: false,
+  //       autoClose: 3000,
+  //     });
+  //   } finally {
+  //     setLoadingAssign(false);
+  //   }
+  // };
+  
+
+  // const handleAssign = async () => {
+  //   if (!isConnected) return toast.info("Please connect wallet");
+  //   if (!ethers.utils.isAddress(student))
+  //     return toast.error("Invalid student address");
+  //   if (!amount || !category || !unlockDate)
+  //     return toast.error("Fill all fields");
+
+  //   try {
+  //     setLoadingAssign(true);
+  //     const signer = await getSigner();
+  //     const edu = new ethers.Contract(
+  //       EDU_TOKEN_ADDRESS,
+  //       EduTokenAbi.abi,
+  //       signer
+  //     );
+  //     const stipend = new ethers.Contract(
+  //       STIPEND_MANAGER_ADDRESS,
+  //       StipendManagerAbi.abi,
+  //       signer
+  //     );
+
+  //     const amountWei = ethers.utils.parseEther(amount);
+  //     // const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
+  //     const unlock = Math.floor(new Date(unlockDate).getTime() / 1000);
+
+  //     const approvalTx = await edu.approve(STIPEND_MANAGER_ADDRESS, amountWei);
+  //     await approvalTx.wait();
+
+  //     // ⛳ This now includes `category`
+  //     const assignTx = await stipend.assignStipend(
+  //       student,
+  //       amountWei,
+  //       unlock,
+  //       category
+  //     );
+  //     await assignTx.wait();
+
+  //     await fetchBalance();
+
+  //     toast.success("✅ Stipend assigned!");
+  //     setStudent("");
+  //     setAmount("");
+  //     setCategory("");
+  //     setUnlockDate("");
+  //   } catch (e) {
+  //     console.error(e);
+  //     toast.error("❌ Failed to assign stipend");
+  //   } finally {
+  //     setLoadingAssign(false);
+  //   }
+  // };
 
   return (
       <Layout>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { InjectedConnector } from "@wagmi/core";
 import { ethers } from "ethers";
 import StipendManagerAbi from "@/lib/abis/StipendManager.json";
 import { formatDistanceToNow } from "date-fns";
@@ -42,7 +41,7 @@ export default function StudentDashboard() {
   const loadStipends = async () => {
     if (!address) return;
     try {
-      setLoading(true);
+      // setLoading(true);
       const signer = await getSigner();
       const stipend = new ethers.Contract(
         STIPEND_MANAGER_ADDRESS,
@@ -71,26 +70,109 @@ export default function StudentDashboard() {
     if (isConnected) loadStipends();
   }, [isConnected]);
 
+
+
+
+
   const handleWithdraw = async (index: number) => {
-    const signer = await getSigner();
-    const stipend = new ethers.Contract(
-      STIPEND_MANAGER_ADDRESS,
-      StipendManagerAbi.abi,
-      signer
-    );
+    if (!isConnected) return toast.info("Please connect wallet");
+  
+    const toastId = toast.loading("⏳ Processing withdrawal...");
+  
     try {
-      setLoading(true);
+      // setLoading(true);
+      const signer = await getSigner();
+      const stipend = new ethers.Contract(
+        STIPEND_MANAGER_ADDRESS,
+        StipendManagerAbi.abi,
+        signer
+      );
+  
       const tx = await stipend.withdraw(index);
-      await tx.wait();
-      toast.success("Withdrawn!");
-      await loadStipends();
+      await tx.wait(); // wait for confirmation before refreshing
+  
+      await loadStipends(); // refresh only after confirmed
+  
+      toast.update(toastId, {
+        render: "✅ Withdrawal successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } catch (e) {
       console.error(e);
-      toast.error("Withdraw failed");
+      toast.update(toastId, {
+        render: "❌ Withdrawal failed.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
   };
+  
+
+  // const handleWithdraw = async (index: number) => {
+  //   if (!isConnected) return toast.info("Please connect wallet");
+  
+  //   const toastId = toast.loading("⏳ Processing withdrawal...");
+  
+  //   try {
+  //     setLoading(true);
+  
+  //     const signer = await getSigner();
+  //     const stipend = new ethers.Contract(
+  //       STIPEND_MANAGER_ADDRESS,
+  //       StipendManagerAbi.abi,
+  //       signer
+  //     );
+  
+  //     const tx = await stipend.withdraw(index);
+  //     await tx.wait();
+  
+  //     await loadStipends();
+  
+  //     toast.update(toastId, {
+  //       render: "✅ Withdrawal successful!",
+  //       type: "success",
+  //       isLoading: false,
+  //       autoClose: 3000,
+  //     });
+  //   } catch (e) {
+  //     console.error(e);
+  //     toast.update(toastId, {
+  //       render: "❌ Withdrawal failed.",
+  //       type: "error",
+  //       isLoading: false,
+  //       autoClose: 3000,
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
+  
+  // const handleWithdraw = async (index: number) => {
+  //   const signer = await getSigner();
+  //   const stipend = new ethers.Contract(
+  //     STIPEND_MANAGER_ADDRESS,
+  //     StipendManagerAbi.abi,
+  //     signer
+  //   );
+  //   try {
+  //     setLoading(true);
+  //     const tx = await stipend.withdraw(index);
+  //     await tx.wait();
+  //     toast.success("Withdrawn!");
+  //     await loadStipends();
+  //   } catch (e) {
+  //     console.error(e);
+  //     toast.error("Withdraw failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const now = Math.floor(Date.now() / 1000);
 
@@ -99,7 +181,7 @@ export default function StudentDashboard() {
       <div>
         <main className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="text-2xl font-bold text-blue-700">
+            <h2 className="text-3xl font-bold text-white text-center">
               Student Dashboard
             </h2>
             {isConnected ? (
@@ -121,14 +203,18 @@ export default function StudentDashboard() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => connect({ connector: new InjectedConnector() })}
-                disabled={status === "loading"}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50"
-              >
-                {status === "loading" ? "Connecting..." : "Connect Wallet"}
-              </button>
-            )}
+              null
+              // <button
+              //   onClick={() => connect({ connector: new InjectedConnector() })}
+              //   disabled={status === "loading"}
+              //   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50"
+              // >
+              //   {status === "loading" ? "Connecting..." : "Connect Wallet"}
+              // </button>
+            )
+            
+            
+            }
           </div>
 
           <div className="bg-white shadow rounded-lg p-6 overflow-x-auto text-black">
